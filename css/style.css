@@ -1,0 +1,99 @@
+
+#headingarea {
+	padding: 5px;
+	width: 1200px;
+	height: 50px;
+	float : horizontal;
+	background-color:#FFA500;
+	clear: both;
+	text-align: center;		
+	}
+
+#logarea {
+	padding: 5px;
+	width: 1200px;
+	height: 200px;
+	float : horizontal;
+	}
+
+#workarea {
+	padding: 5px;
+	width: 1200px;
+	height: 500px;
+	float : horizontal;
+	background-color: grey;
+	}
+#workarea1 {
+	padding: 5px;
+	width: 1200px;
+	height: 500px;
+	float : horizontal;
+	background-color: grey;
+	}
+#viewtopologyarea {
+	padding: 5px;
+	width: 850px;
+	height: 450px;
+	float : left;
+	background-color: grey;
+	}
+}
+
+
+#autharea {
+	padding: 5px;
+	width: 1200px;
+	height: 500px;
+	float : horizontal;
+	background-color: grey;
+	clear: both;				
+	text-align: center;
+	}
+
+#navarea {
+	padding: 5px;
+	width: 250px;
+	height: 400px;
+	float : left;
+	}
+
+#topologyarea {
+	padding: 5px;
+	width: 850px;
+	height: 450px;
+	float : left;
+	background-color: grey;
+	}
+
+#topodevices {
+	border:solid black thin;
+	width: 400px;
+	height: 250px;
+	background-color: grey;
+	float:left;
+	}
+
+#topolinks {
+	border:solid black thin;
+	width: 400px;
+	height :250 px;
+	background-color: grey;
+	float:left;
+	}
+
+#topoinfo {
+	border:solid black thin;
+	width: 800px;
+	height :300 px;
+	background-color: grey;
+	float:left;
+	}
+
+
+#authlegend {
+	font-size : 10px;
+	background-color: blue;
+	color:white;
+	width : 1200px;
+	padding:5px;
+	}
