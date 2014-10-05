@@ -10,13 +10,13 @@
 	</head>
 
 	<body>
-		<div class="headingarea" id="headingarea">			
+
+		<div class="HeaderArea" id="HeaderArea">			
 			<h1> VNET LAB UI </h1> 
 		</div>
+		<div id="WorkArea">
+			<div id="AuthenticationArea">
 
-		<div id="workarea">
-
-			<div id="autharea">
   				<form id = "authform">
   					<fieldset >
   					<legend id="authlegend">Authentication</legend>
@@ -35,24 +35,47 @@
 				</form>
 
  			</div>
+			<div class="ContentArea" id="ContentArea">
+				<div id="NavigationArea" class="ui-widget-content">
+					<h3> Project View </h3>
+						<div><a href="#" id="projectdetailslink">Project Details </a> </div>
 
-
-			<div class="workarea1" id="workarea1">
-
-				<div id="navarea" class="ui-widget-content">
 					<h3>Topology View</h3>
-						<div><a href="#" id="createtopolink">CreateTopology </a>  
-							 <a href="#"id="viewtopolink">ViewTopology</a>
-							 <a href="#"id="deletetopolink">DeleteTopology</a></div>
+						<div><a href="#" id="createtopologylink">CreateTopology </a>  
+							 <a href="#"id="viewtopologylink">ViewTopology</a>
+							 <a href="#"id="deletetopologylink">DeleteTopology</a></div>
 					<h3>Device View</h3>
-						<div><p>DeviceStatus</p></div>
-					<h3>Report View</h3>
-						<div><p>Devices</p></div>
-					<h3>Configuration</h3>
-						<div><p>Links</p></div>
+						<div><a href="#" id="deviceconfiglink">Device Config</a><br>
+							<a href="#" id="devicestatuslink">Device Status</a><br>
+						     <a href="#" id="devicestatisticslink">Device Statistics</a></div>
+					<h3>Custom Configuration</h3>
+						<div><a href="#" id="linkprofilelink">Link Profile</a></div>
+				</div>
+				<div class="topology" id="ProjectDetailsArea">
+					<h1> Project Details </h1>
+				</div>
+				<div class="topology" id="TopologyViewArea">
+					<h1> Topology View </h1>
+				</div>
+				<div class="topology" id="TopologyDeleteArea">
+					<h1> Topology Delete </h1>
+				</div>
+				<div class="topology" id="DeviceConfigArea">
+					<h1> Device Config </h1> 
+				</div>
+				<div class="topology" id="DeviceStatusArea">
+					<h1> Device Status </h1> 
+				</div>
+				<div class="topology" id="DeviceStatisticsArea">
+					<h1> Device Statistics </h1>					
 				</div>
 
-				<div class="topology" id="createtopologyarea">				
+				<div class="topology" id="CustomConfigArea">
+					<h1> Custom Configuration </h1>
+				</div>				
+
+				<div class="topology" id="TopologyCreateArea">				
+					<h1> Topology Creation View </h1>
 					<div id="topodevices">
 						<form>
 							<fieldset>
@@ -83,7 +106,7 @@
  					<div id="topolinks">
  						<form>
 							<fieldset>
-							<legend> WAN Links</legend> 						
+							<legend>\ WAN Links</legend> 						
 	 						<p>
 	 							<label for="linktype"> Type: </label>
  								<select  id="linktype">
@@ -128,26 +151,12 @@
  							</p>
  						</form>
  					</div>
-				</div>
-				<div class="topology" id="viewtopologyarea">	
-					<fieldset>
-							<legend> Topology View</legend> 						
-							<table>
-								<tr><td>Topology ID </td><td id="#tbltd_topologyid"></td></tr>
-								<tr><td>Device Status></td></tr>
-								<tr id = "tbltr_devicestatus"></tr>
-								<tr><td> Switch Details</td></tr>
-								<tr id="tbltr_switchstatus"></tr>
-							</table>
-					</fieldset>
-				</div>
-				<div class="topology" id=""
+				</div>				
+			</div>
+ 		</div>
 
-		</div>
 
- 	</div>
-
-	<div id="logarea"> 				 		
+	<div class="LogArea" id="LogArea"> 				 		
  		<table id="tablelog">
 			<tr><td>Debug Logs</td></tr>
 		</table>

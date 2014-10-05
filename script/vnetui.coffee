@@ -1,7 +1,26 @@
+## HTML Layout View - DIV TAG details ##
+# 1.HeaderArea
+# 2.LogArea
+# 3.WorkArea
+#   a.AuthenticationArea
+#   b.ContentArea
+#        i. NavigationArea
+#		 ii.ProjectDetailsArea
+#		 iii.TopologyCreateArea
+#		 iv. TopologyViewArea
+#		 v. TopologyDeleteArea
+#		 vi. DeviceConfigArea
+#		 vii.DeviceStatisticsArea
+#		 viii.CustomConfigArea.
+##			
+
 #global parameters
 controllerurl = "http://localhost:8888"
+
 projectid = null
 passcode = null
+projectdata = {}
+
 authenticated = false
 TopologyExists = false
 #TopologyData = {}
@@ -13,88 +32,122 @@ nodes = []
 switches = []
 nodenames = []
 links = []
+devices = []
 
-#Hide/shiw Div view functions
+
+
+#Dynamically populated view data
+projectview_data = null
+topologyview_data = null
+
+#Hide/shiw Div view functions....make sure views are doesnt manipulated in other functions
+
+hideAllMainViews = ()->
+	$("#HeaderArea").hide()	
+	$("#WorkArea").hide()
+	$("#LogArea").hide()
+
+hideAllWorkAreaSubviews = ()->
+	$("#AuthenticationArea").hide()
+	$("#ContentArea").hide()
+
+hideAllContentAreaSubviews = ()->	
+	#$("NavigationArea").hide() --- we dont want to hide navigation view 
+	$("#ProjectDetailsArea").hide()
+	$("#TopologyCreateArea").hide()
+	$("#TopologyViewArea").hide()
+	$("#TopologyDeleteArea").hide()
+	$("#DeviceConfigArea").hide()
+	$("#DeviceStatisticsArea").hide()
+	$("#CustomConfigArea").hide()
+
+#----------------------------------------------------------------------------------
 LoginView = ()->	
-	hideallviews()
-	#$("#headingarea").show()
-	$("#headingarea").show()
-	$("#workarea").show()
-	$("#workarea1").hide()
-	$("#autharea").show()
-	$("#logarea").show()
+	hideAllMainViews()	
+	hideAllWorkAreaSubviews()
+	hideAllContentAreaSubviews()
+	$("#HeaderArea").show()
+	$("#WorkArea").show()	
+	$("#AuthenticationArea").show()
 
-
-hideallviews = ()->
-	$("#headingarea").hide()	
-	$("#workarea").hide()
-	$("#logarea").hide()
-
-
-
-hideWorkareaViews = ()->	
-	$("createtopologyarea").hide()
-	$("viewtopologyarea").hide()
-	#$("#topocreate").hide()
-	#$("#topoview").hide()
-	#$("#devices").hide()
-
-
-showmainviews = ()->
-	hideallviews()
-	$("#autharea").hide()
-	$("#headingarea").show()
-	$("#workarea").show()	
-	$("#logarea").show()		
-	$("#workarea1").show()
-	$("#navarea").show()
-	$("#createtopologyarea").hide()
-	$("#viewtopologyarea").hide()
-	#hideWorkareaViews()
+ShowMainViews = ()->
+	hideAllWorkAreaSubviews()
+	hideAllMainViews()	
+	hideAllContentAreaSubviews()
+	$("#HeaderArea").show()
+	$("#WorkArea").show()	
+	$("#LogArea").show()		
+	$("#ContentArea").show()
+	hideAllContentAreaSubviews()
+	$("#NavigationArea").show()
 
 ##main routine
 $ ->
-	$( "#navarea" ).accordion
+	$( "#NavigationArea" ).accordion
 		collapsible: true
 		heightStyle: "content"
+
+	$("#devicestatistics_tabs").tabs()
 	debuglog "DOM is ready"
 	#show the login screen
 	LoginView()
 
 
-
-	$("#createtopolink").click ()=>
-		hideWorkareaViews()
+	$("#projectdetailslink").click ()=>
+		hideAllContentAreaSubviews()		
+		if projectview_data is null
+			populateprojectdetails()
+			$("#ProjectDetailsArea").append projectview_data
+		$("#ProjectDetailsArea").show()
+	
+	$("#createtopologylink").click ()=>
+		hideAllContentAreaSubviews()
 		getExistingTopology()
 		if TopologyExists is false
-			$("#createtopologyarea").show()
+			$("#TopologyCreateArea").show()		
 
-	$("#viewtopolink").click ()=>		
-		$("#createtopologyarea").hide()
-		$("#viewtopologyarea").show()
-		viewTopology()
-		#hideWorkareaViews()
-		#$("#topoview").show()
-	$("#deletetopolink").click ()=>
+	
+
+	$("#viewtopologylink").click ()=>		
+		hideAllContentAreaSubviews()
+		#if topologyview_data is null
+		populateViewTopologyDetails()
+			#$("#TopologyViewArea").append topologyview_data
+		$("#TopologyViewArea").show()
+		
+		
+	$("#deletetopologylink").click ()=>
+		hideAllContentAreaSubviews()
 		deleteTopology()
+		$("#TopologyDeleteArea").show()
+		
+
+	$("#deviceconfiglink").click ()=>
+		hideAllContentAreaSubviews()		
+		$("#DeviceConfigArea").show()		
 
 	$("#devicestatuslink").click ()=>
-		hideWorkareaViews()
-		$("#devices").show()		
-	$("#deviceviewlink").click ()=>
-		hideWorkareaViews()
-	$("#configviewlink").click ()=>
-		hideWorkareaViews()
+		hideAllContentAreaSubviews()		
+		$("#DeviceStatusArea").show()		
 
+	$("#devicestatisticslink").click ()=>
+		hideAllContentAreaSubviews()
+		$("#DeviceStatisticsArea").show()
+		
+	$("#linkprofilelink").click ()=>
+		hideAllContentAreaSubviews()
+		$("#CustomConfigArea").show()
+		
+#utility function
 
 log = $("#tablelog")
 debuglog = (mytext)->
-	#newDate = new Date();
-	#datetime = "LastSync: " + newDate.today() + " @ " + newDate.timeNow()
 	$("#tablelog").append "<p>" + mytext + "<p>"
-	#$("#topodetails").children("p").text(x + mytext )
-#Auth routine
+
+
+#Auth routine and populate the project routine----------------------------------
 authenticate = ()->
+	console.log "authenticate called"
 	projectid = $("#projectid").val() 
 	passcode = $("#passcode").val()			
 	url = "http://localhost:2222/project/"+projectid+"/passcode/"+passcode
@@ -103,14 +156,19 @@ authenticate = ()->
 		if result.data?
 			authenticated = true						
 			debuglog "project data  " + JSON.stringify result.data
-			showmainviews()
+			projectdata = result.data			
+			ShowMainViews()
 			getExistingTopology()
 		else
 			debuglog "unknown project id"
-			
-	#check whether the topology exists for this projectid
-	#getTopology() 
-	
+
+populateprojectdetails = ()->
+	projectview_data = "<table>"
+	for key,val of projectdata
+		projectview_data += "<tr><td>#{key}</td><td>#{val}</td></tr>"
+	projectview_data += "</table>"
+	debuglog "projectview_data " + projectview_data
+#---------------------------------------------------------------------------------
 
 getExistingTopology = ()->
 	return if authenticated is false
@@ -122,16 +180,72 @@ getExistingTopology = ()->
 		if result[0]?.data?
 			TopologyExists = true
 			Topologyid = result[0].id
-			debuglog "Topology id " + Topologyid
-			#TopologyData = result[0].data
+			debuglog "Topology id " + Topologyid			
 			debuglog "Topology Exists"
-			#debuglog "Topo data  " + JSON.stringify TopologyData
-			
+			#debuglog "Topo data  " + JSON.stringify TopologyData			
 		else
 			TopologyExists = false
-
 			debuglog "No Topology Exists"
+
+populateViewTopologyDetails = ()->
+	$("#TopologyViewArea").empty()
+
+	unless Topologyid?	
+		debuglog "Topology doesnt exists ... Please create a Topology " + Topologyid
+		$("#TopologyViewArea").append "<H1 > No associated Topology available for this project. Please create one for you <H1>"
+		return
+
+	url = controllerurl + "/topology/" + Topologyid + "/status"
+	debuglog "get  topology  status url is " + url	
+	$.getJSON url, (result)=>
+		debuglog "getTopology status result is " + JSON.stringify result
+		topologyview_data = "<table><tr><td>UUID</td><td>Name</td><td>Type</td><td>MgmtIP</td><td>status</td></tr>"
+		devices = result.nodes
+		for node in result.nodes
+			debuglog "node is " + JSON.stringify node
+			topologyview_data += "<tr>"
+			for key,val of node
+				topologyview_data += "<td>#{val}</td>"if key is "id"
+				if key is "config"
+					topologyview_data += "<td>#{val.name}</td>"					
+					topologyview_data += "<td>#{val.type}</td>"
+					###
+					if key is "ifmap"					
+						for ifm in val
+							for keyy, vall of ifm
+								ipa = val if keyy is "ipaddress"
+								type = val	if keyy is "type"
+								if type is "mgmt"
+									formatop += ip
+									break
+					###
+				if key is "status"
+					topologyview_data += "<td>#{val.result}</td>"
+				#debuglog "name :" +  val.name if key is "config"
+				#debuglog "status :" +  val.result if key is "status"
+
+				Topologystatus = val.result
+			topologyview_data += "</tr>"
+		topologyview_data += "</table>"
+		debuglog "topologyview_data " + topologyview_data
+		$("#TopologyViewArea").append topologyview_data
+		#setTopologyStatusWidget()
+		#setViewTopologyView formatop
+
+populateDeviceConfigView = ()->
+
+populateDeviceStatusView = ()->
+	#query the individual device and device status
+
+populateDeviceStatisticsView = ()->
+	#query individual device statistics
+
 	
+
+
+
+#Topology creation routines
+#--------------------------------------------------------------------------------------
 populateDevices = ()->
 	noofswitches = $("#switches").val()
 	noofrouters = $("#routers").val()
@@ -139,10 +253,6 @@ populateDevices = ()->
 	debuglog "No of Switches " + noofswitches
 	debuglog "No of Routers " + noofrouters
 	debuglog "No of Hosts " + noofhosts
-	#printTopologyData "No of Switches " + noofswitches
-	#printTopologyData  "No of Routers " + noofrouters
-	#printTopologyData  "No of Hosts " + noofhosts
-
 	i = 0
 	while i < noofswitches 
 		sw = 
@@ -249,48 +359,9 @@ createTopology = ()->
 			Topologystatus = "creation-in-progress"
 			setTopologyStatusWidget()	
 			return
+#Topology creation routine ends.-------------------------------------------------------------------------
 
-viewTopology = ()->
-	unless Topologyid?
-		debuglog "Topology doesnt exists ... Please create a Topology " + Topologyid
-		$("#viewtopologyarea").add("<H1> No associated Topology available for this project. Please create one for you <H1>")
 
-	url = controllerurl + "/topology/" + Topologyid + "/status"
-	debuglog "get  topology  status url is " + url	
-	$.getJSON url, (result)=>
-		debuglog "getTopology status result is " + JSON.stringify result
-		formatop = "<td>Name</td><td>id</td><td>type</td><td>MgmtIP</td><td>status</td><br>"
-		for node in result.nodes
-			debuglog "node is " + JSON.stringify node
-			formatop += "<tr>"
-			for key,val of node
-				formatop += "<td>#{val}</td>"if key is "id"
-				if key is "config"
-					formatop += "<td>#{val.name}</td>"					
-					formatop += "<td>#{val.type}</td>"
-					###
-					if key is "ifmap"					
-						for ifm in val
-							for keyy, vall of ifm
-								ipa = val if keyy is "ipaddress"
-								type = val	if keyy is "type"
-								if type is "mgmt"
-									formatop += ip
-									break
-					###
-				if key is "status"
-					formatop += "<td>#{val.result}</td>"
-				#debuglog "name :" +  val.name if key is "config"
-				#debuglog "status :" +  val.result if key is "status"
-
-				Topologystatus = val.result
-			formatop += "</tr>"
-		debuglog "formatop " + formatop
-
-		setTopologyStatusWidget()
-		setViewTopologyView formatop
-
-		
 
 deleteTopology = ()->
 	debuglog "Topology delete called  ..." + Topologyid
@@ -316,6 +387,11 @@ deleteTopology = ()->
 			return
 
 
+
+
+
+
+
 #Widget updates
 setTopologyIdwidget = ()->
 	$("#topologyid").val(Topologyid)
@@ -325,7 +401,8 @@ setTopologyIdwidget = ()->
 setTopologyStatusWidget = ()->
 	$("#topologystatus").val(Topologystatus)
 
-setViewTopologyView = (value)->
-	$("#tbltr_devicestatus").append value
+setViewTopologyView = (value) ->
+	debuglog "value is " + value
+	$("#tbltrdevicestatus").append value
 
 
