@@ -1,0 +1,1 @@
+Vnetlabui.ApplicationAdapter = DS.FixtureAdapter
